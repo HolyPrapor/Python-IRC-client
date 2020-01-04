@@ -32,11 +32,7 @@ class IRC:
 
     def start_thread(self):
         self.socketThread = SocketThread(
-            self.stop_thread_request,
-            self.rx_queue,
-            self.server,
-            self.port,
-            self.sock,
+            self.stop_thread_request, self.rx_queue, self.sock,
         )
         self.stop_thread_request.clear()
         self.socketThread.start()
@@ -120,13 +116,13 @@ class IRC:
         self.nicknames.sort()
         self.ui.set_nicknames(self.nicknames)
 
-    def del_nick(self, nick):
+    def delete_nick(self, nick):
         if nick in self.nicknames:
             self.nicknames.remove(nick)
             self.ui.set_nicknames(self.nicknames)
 
     def replace_nick(self, old_nick, new_nick):
-        self.del_nick(old_nick)
+        self.delete_nick(old_nick)
         self.add_nick(new_nick)
         self.ui.set_nicknames(self.nicknames)
         self.ui.add_status_message(f"{old_nick} is now known as {new_nick}")
@@ -166,14 +162,15 @@ class IRC:
             self.ui.add_debug_message("<- " + rx)
             self.handle_message(self.parse_message(rx))
 
-    def parse_message(self, message):
+    @staticmethod
+    def parse_message(message):
         prefix = ""
         if message[0] == ":":
             prefix, message = message[1:].split(" ", 1)
-        if (message.find(" :")) != -1:
-            message, trailing = message.split(" :", 1)
+        if message.find(" :") != -1:
+            message, trail = message.split(" :", 1)
             args = message.split()
-            args.append(trailing)
+            args.append(trail)
         else:
             args = message.split()
         command = args.pop(0)
@@ -187,7 +184,7 @@ class IRC:
             message = " ".join(args[1:])
             nick = prefix[: prefix.find("!")]
             if args[1].startswith(chr(1)):
-                ctcp = message.replace(chr(1), '').split()
+                ctcp = message.replace(chr(1), "").split()
                 ctcp_command = ctcp[0]
                 ctcp_message = " ".join(ctcp[1:])
                 self.handle_ctcp(ctcp_command, ctcp_message)
@@ -207,7 +204,7 @@ class IRC:
                 self.ui.add_status_message(f"{nick} joined the channel")
         if command == "PART" and args[0] == self.channel:
             nick = prefix[: prefix.find("!")]
-            self.del_nick(nick)
+            self.delete_nick(nick)
             self.ui.add_status_message(f"{nick} left the channel")
         if command == "353":  # NAMEREPLY
             nicknames = " ".join(args[3:]).split()
@@ -229,14 +226,10 @@ class IRC:
 
 
 class SocketThread(threading.Thread):
-    running = True
-
-    def __init__(self, event, rx_queue, server, port, sock):
+    def __init__(self, event, rx_queue, sock):
         super(SocketThread, self).__init__()
         self.stop_thread_request = event
         self.rx_queue = rx_queue
-        self.server = server
-        self.port = port
         self.socket = sock
 
     def run(self):
