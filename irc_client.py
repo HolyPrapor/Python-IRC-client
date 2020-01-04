@@ -36,7 +36,7 @@ class IRC:
             self.rx_queue,
             self.server,
             self.port,
-            self.sock
+            self.sock,
         )
         self.stop_thread_request.clear()
         self.socketThread.start()
@@ -187,7 +187,7 @@ class IRC:
             message = " ".join(args[1:])
             nick = prefix[: prefix.find("!")]
             if args[1].startswith(chr(1)):
-                ctcp = message.translate({chr(1): None}).split()
+                ctcp = message.replace(chr(1), '').split()
                 ctcp_command = ctcp[0]
                 ctcp_message = " ".join(ctcp[1:])
                 self.handle_ctcp(ctcp_command, ctcp_message)
@@ -298,8 +298,8 @@ class UserInterface:
 
     def get_nick_color(self, nick):
         return (
-                int(hashlib.md5(nick.encode("utf-8")).hexdigest(), 16)
-                % self.curses_ui.colors
+            int(hashlib.md5(nick.encode("utf-8")).hexdigest(), 16)
+            % self.curses_ui.colors
         )
 
     def shutdown(self):
@@ -309,11 +309,11 @@ class UserInterface:
         self.curses_ui.toggle_debug()
 
     def draw_integral(self):
-        self.add_message("                /", 2)
-        self.add_message("                I", 3)
-        self.add_message("                I", 3)
-        self.add_message("                ]", 3)
-        self.add_message("                /", 2)
+        self.add_message("                /--  x", 2)
+        self.add_message("                I   e  ", 3)
+        self.add_message("                I ____ ", 3)
+        self.add_message("                ]  dx", 3)
+        self.add_message("              --/", 2)
 
     def get_time_stamp(self):
         return datetime.now().strftime("[%H:%M]")
@@ -327,7 +327,7 @@ class KeyboardHandler:
         self.irc = irc
 
     def parse_input(self, keyboard_input):
-        if keyboard_input.startswith('/'):
+        if keyboard_input.startswith("/"):
             if len(keyboard_input) > 1:
                 self.handle_cmd(keyboard_input[1:])
         else:
@@ -340,9 +340,6 @@ class KeyboardHandler:
             if len(args) == 1 and args[0].count(":") == 1:
                 server, port = args[0].split(":")
                 if port.isdigit():
-                    self.irc.ui.add_status_message(
-                        "Connecting to " + server + ":" + port
-                    )
                     self.irc.connect(server, int(port))
                 else:
                     self.irc.ui.add_status_message(
@@ -358,8 +355,8 @@ class KeyboardHandler:
                 self.irc.ui.add_status_message("Usage: join <channel>")
             else:
                 channel_name = args[0]
-                if not channel_name.startswith('#'):
-                    channel_name = '#' + channel_name
+                if not channel_name.startswith("#"):
+                    channel_name = "#" + channel_name
                 self.irc.join(channel_name)
         elif command == "part":
             self.irc.part()
@@ -398,5 +395,5 @@ class KeyboardHandler:
             self.irc.ui.add_status_message(msg)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     IRC().run()

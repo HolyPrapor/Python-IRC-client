@@ -53,14 +53,25 @@ class CursesInterface:
 
     def make_windows(self):
         self.input_window = curses.newwin(
-            self.input_window_height, self.screen_width, self.nick_window_height + self.border_size, 0
+            self.input_window_height,
+            self.screen_width,
+            self.nick_window_height + self.border_size,
+            0,
         )
-        self.chat_window = curses.newwin(self.chat_window_height, self.chat_window_width, 0, 0)
+        self.chat_window = curses.newwin(
+            self.chat_window_height, self.chat_window_width, 0, 0
+        )
         self.nick_window = curses.newwin(
-            self.nick_window_height, self.nick_window_width, 0, self.chat_window_width + self.border_size
+            self.nick_window_height,
+            self.nick_window_width,
+            0,
+            self.chat_window_width + self.border_size,
         )
         self.debug_border = curses.newwin(
-            self.debug_window_height, self.debug_window_width, self.debug_window_y, self.debug_window_x
+            self.debug_window_height,
+            self.debug_window_width,
+            self.debug_window_y,
+            self.debug_window_x,
         )
         self.debug_window = curses.newwin(
             self.debug_window_height - 2,
@@ -80,10 +91,16 @@ class CursesInterface:
         self.input_window_height = 1
         self.border_size = 1
         self.screen_height, self.screen_width = self.screen.getmaxyx()
-        self.chat_window_width = int(self.screen_width * self.chat_to_window_ratio / 100)
-        self.chat_window_height = self.screen_height - self.input_window_height - self.border_size
+        self.chat_window_width = int(
+            self.screen_width * self.chat_to_window_ratio / 100
+        )
+        self.chat_window_height = (
+            self.screen_height - self.input_window_height - self.border_size
+        )
         self.nick_window_width = self.screen_width - self.chat_window_width - 1
-        self.nick_window_height = self.screen_height - self.input_window_height - self.border_size
+        self.nick_window_height = (
+            self.screen_height - self.input_window_height - self.border_size
+        )
         self.debug_window_width = int(self.screen_width - 6)
         self.debug_window_height = int(self.screen_height / 2)
         self.debug_window_x = 3
@@ -99,9 +116,18 @@ class CursesInterface:
         if width != self.screen_width or height != self.screen_height:
             self.resize_window()
         self.screen.attron(self.border_color_pair)
-        self.screen.hline(self.chat_window_height, 0, curses.ACS_HLINE, self.screen_width)
-        self.screen.vline(0, self.chat_window_width, curses.ACS_VLINE, self.chat_window_height)
-        self.screen.addch(self.chat_window_height, self.chat_window_width, curses.ACS_BTEE)
+        self.screen.hline(
+            self.chat_window_height, 0, curses.ACS_HLINE, self.screen_width
+        )
+        self.screen.vline(
+            0,
+            self.chat_window_width,
+            curses.ACS_VLINE,
+            self.chat_window_height,
+        )
+        self.screen.addch(
+            self.chat_window_height, self.chat_window_width, curses.ACS_BTEE
+        )
         self.screen.refresh()
         self.chat_window.refresh()
         self.nick_window.refresh()
@@ -118,10 +144,7 @@ class CursesInterface:
         self.input_window.move(0, 0)
         self.input_window.deleteln()
         self.input_window.addstr(
-            self.irc.nick
-            + "@"
-            + self.irc.get_channel()
-            + "> "
+            self.irc.nick + "@" + self.irc.get_channel() + "> "
         )
 
     def add_message(self, message, color):
