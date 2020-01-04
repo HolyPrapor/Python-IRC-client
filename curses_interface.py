@@ -5,9 +5,8 @@ class UserInterfacePlugin:
     # Uses the curses terminal handling library to display a chat log,
     # a list of users in the current channel, and a command prompt for
     # entering messages and application commands.
-    def __init__(self, irc, kb):
+    def __init__(self, irc):
         self.ircHandle = irc
-        self.kbHandle = kb
         self.buf = ""
         curses.setupterm()
         self.colors = curses.tigetnum("colors")
@@ -37,33 +36,19 @@ class UserInterfacePlugin:
     def run(self):
         while True:
             self.ircHandle.poll()
-            self.poll_kb()
+            yield self.poll_kb()
 
     def poll_kb(self):
-        # Detect keys pressed on the keyboard, and assemble a string, character
-        # by character. The string is passed to downstream logic when the user
-        # presses the enter key.
-        #
-        # Note: We can't use curses' simpler line-based keyboard input routine
-        # getstr(), because it would block our thread until the user pressed
-        # enter, and we wouldn't be able to display messages coming in from the
-        # network in real time. To work around this, we use curses' cbreak()
-        # function which causes its keyboard routines to return immediately.
-        # A side effect of this is that we must continuously poll for characters.
         keycode = self.inputWin.getch()
+        kb_input = None
         if keycode >= 0:
             if keycode == 10:
                 # The enter key was pressed.
                 if self.buf != "":
-                    self.kbHandle.parse_input(self.buf)
+                    kb_input = self.buf
                     self.buf = ""
                     self.clear_input_window()
             elif keycode == 127:
-                # The backspace key was pressed.
-                # Note: curses.KEY_BACKSPACE is listed as "unreliable" in the
-                # curses+python documentation. I have found this to be true when
-                # switching between differing terminal types (inside and outside
-                # of tmux, i.e. screen-256 and rxvt-unicode.
                 if self.buf != "":
                     self.buf = self.buf[:-1]
                     y, x = self.inputWin.getyx()
@@ -71,6 +56,7 @@ class UserInterfacePlugin:
             elif (keycode >= 32) and (keycode < 127):
                 self.buf = self.buf + chr(keycode)
                 self.inputWin.addch(keycode)
+        return kb_input
 
     def make_windows(self):
         # Create the curses windows we'll be using to display text.
