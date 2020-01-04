@@ -9,14 +9,14 @@
 :weber.freenode.net 005 Zeliboba CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstuz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode STATUSMSG=@+ CALLERID=g CASEMAPPING=rfc1459 :are supported by this server
 :weber.freenode.net 005 Zeliboba CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 DEAF=D FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: EXTBAN=$,ajrxz CLIENTVER=3.0 SAFELIST ELIST=CTU KNOCK :are supported by this server
 :weber.freenode.net 005 Zeliboba CPRIVMSG CNOTICE WHOX ETRACE :are supported by this server
-:weber.freenode.net 251 Zeliboba :There are 104 users and 76900 invisible on 29 servers
+:weber.freenode.net 251 Zeliboba :There are 102 users and 76926 invisible on 29 servers
 :weber.freenode.net 252 Zeliboba 36 :IRC Operators online
-:weber.freenode.net 253 Zeliboba 53 :unknown connection(s)
-:weber.freenode.net 254 Zeliboba 50551 :channels formed
-:weber.freenode.net 255 Zeliboba :I have 4245 clients and 1 servers
-:weber.freenode.net 265 Zeliboba 4245 4754 :Current local users 4245, max 4754
-:weber.freenode.net 266 Zeliboba 77004 86721 :Current global users 77004, max 86721
-:weber.freenode.net 250 Zeliboba :Highest connection count: 4755 (4754 clients) (200424 connections received)
+:weber.freenode.net 253 Zeliboba 40 :unknown connection(s)
+:weber.freenode.net 254 Zeliboba 50534 :channels formed
+:weber.freenode.net 255 Zeliboba :I have 4259 clients and 1 servers
+:weber.freenode.net 265 Zeliboba 4259 4754 :Current local users 4259, max 4754
+:weber.freenode.net 266 Zeliboba 77028 86721 :Current global users 77028, max 86721
+:weber.freenode.net 250 Zeliboba :Highest connection count: 4755 (4754 clients) (200501 connections received)
 :weber.freenode.net 375 Zeliboba :- weber.freenode.net Message of the Day -
 :weber.freenode.net 372 Zeliboba :- Welcome to weber.freenode.net in California, USA.
 :weber.freenode.net 372 Zeliboba :- Thanks to https://www.cloudsigma.com/ for sponsoring
@@ -79,10 +79,6 @@
 :Zeliboba!~pynapple@126-234-114-217.fttb.ur.ru JOIN #test
 :weber.freenode.net 332 Zeliboba #test :Welcome to freenode's test channel | Note: This is NOT #flood! Be nice, do NOT spam and do NOT paste senseless crap here. Try to be nice and helpful. Test and develop your bot in channel #botwar
 :weber.freenode.net 333 Zeliboba #test sysdef!~sysdef@debiancenter/founder.developer/pdpc.professional.sysdef 1531152795
-:weber.freenode.net 353 Zeliboba @ #test :Zeliboba +jatt +jib_ +Kishore +fc5dc9d4 +Irudayaraj +CaptainStarbuck +hussam +pk12 +axsuul +theMaze_ +malkauns +PowaBanga +phpbb-discord +jave +tragique[m] +parsnip +blu3r4d0n +sdx23 +sysdef +zmo @ChanServ +tibaret +Koragg +Researcher +kaeffchen_ +Peetz0r +yhpark_talk_____ +thekingofbandit +martiniss_ +jnbr +test88876 +naf +holla +xnox +JStoker +z_free +gams +pppingme +i__ron +student069 +user_id +zolvaring +celphi +pcw +Foxtrot
+:weber.freenode.net 353 Zeliboba @ #test :Zeliboba +jib_ +Zeliboba85 +jatt +Kishore +fc5dc9d4 +Irudayaraj +CaptainStarbuck +hussam +pk12 +axsuul +theMaze_ +malkauns +PowaBanga +phpbb-discord +jave +tragique[m] +parsnip +blu3r4d0n +sdx23 +sysdef +zmo @ChanServ +tibaret +Koragg +Researcher +kaeffchen_ +Peetz0r +yhpark_talk_____ +thekingofbandit +martiniss_ +jnbr +test88876 +naf +holla +xnox +JStoker +z_free +gams +pppingme +i__ron +student069 +user_id +zolvaring +celphi +pcw +Foxtrot
 :weber.freenode.net 366 Zeliboba #test :End of /NAMES list.
 :ChanServ!ChanServ@services. MODE #test +v Zeliboba
-:Zeliboba85!d972ea7e@gateway/web/cgi-irc/kiwiirc.com/ip.217.114.234.126 JOIN #test
-:ChanServ!ChanServ@services. MODE #test +v Zeliboba85
-:Zeliboba85!d972ea7e@gateway/web/cgi-irc/kiwiirc.com/ip.217.114.234.126 PRIVMSG #test :hi
-:Zeliboba85!d972ea7e@gateway/web/cgi-irc/kiwiirc.com/ip.217.114.234.126 PRIVMSG Zeliboba :works very well
