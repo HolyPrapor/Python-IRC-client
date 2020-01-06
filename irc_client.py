@@ -64,7 +64,14 @@ class IRC:
 
     def send(self, command):
         if self.connected:
-            self.sock.send(bytes(command + "\n", "UTF-8"))
+            bytes_sent = 0
+            bytes_to_sent = bytes(command + "\n", "UTF-8")
+            while bytes_sent < len(bytes_to_sent):
+                current_sent = self.sock.send(bytes_to_sent[bytes_sent:])
+                if current_sent == 0:
+                    self.ui.add_status_message("Connection lost")
+                    self.disconnect()
+                bytes_sent += current_sent
             self.ui.add_debug_message("-> " + command)
 
     def send_message(self, message):
@@ -242,12 +249,14 @@ class SocketThread(threading.Thread):
         self.socket = sock
 
     def run(self):
-        rx = ""
+        rx = bytes()
         while not self.stop_thread_request.isSet():
-            rx = rx + self.socket.recv(1024).decode("utf-8")
-            if rx != "":
-                buffer = rx.split("\n")
-                rx = buffer.pop()
+            rx = rx + self.socket.recv(1024)
+            if rx:
+                buffer = rx.decode(encoding='utf-8', errors='ignore')
+                decoded_bytes = len(bytes(buffer, 'utf-8'))
+                buffer = buffer.split('\n')
+                rx = bytes(buffer.pop(), 'utf-8') + rx[decoded_bytes:]
                 for line in buffer:
                     line = line.rstrip()
                     self.rx_queue.put(line)
