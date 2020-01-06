@@ -257,13 +257,14 @@ class SocketThread(threading.Thread):
         while not self.stop_thread_request.isSet():
             rx = rx + self.socket.recv(1024)
             if rx:
-                buffer = rx.decode(encoding="utf-8", errors="ignore")
-                decoded_bytes = len(bytes(buffer, "utf-8"))
-                buffer = buffer.split("\n")
-                rx = bytes(buffer.pop(), "utf-8") + rx[decoded_bytes:]
-                for line in buffer:
-                    line = line.rstrip()
-                    self.rx_queue.put(line)
+                last_line_break_position = rx.rfind(b'\n')
+                if last_line_break_position != -1:
+                    buffer = rx[:last_line_break_position].decode(
+                        'utf-8').split('\n')
+                    rx = rx[last_line_break_position + 1:]
+                    for line in buffer:
+                        line = line.rstrip()
+                        self.rx_queue.put(line)
             else:
                 self.stop_thread_request.set()
         return
@@ -290,7 +291,7 @@ class UserInterface:
 
     def add_nick_message(self, nick, message):
         color = self.get_nick_color(nick)
-        self.add_message("<" + nick + "> " + message, color)
+        self.add_message(f"<{nick}> {message}", color)
 
     def add_emote_message(self, nick, message):
         color = self.get_nick_color(nick)

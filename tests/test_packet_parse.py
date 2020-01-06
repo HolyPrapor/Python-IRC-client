@@ -13,8 +13,7 @@ from irc_client import SocketThread, IRC
 
 
 def socket_iterator(*args):
-    for argument in args:
-        yield argument
+    yield from args
     while True:
         yield ""
 
