@@ -53,11 +53,15 @@ class IRC:
             try:
                 self.sock.connect((server, port))
                 self.connected = True
-            except:
-                self.ui.add_status_message(f"Unable to connect to {server}:{str(port)}")
+            except socket.error:
+                self.ui.add_status_message(
+                    f"Unable to connect to {server}:{str(port)}"
+                )
             if self.connected:
                 self.start_thread()
-                self.ui.add_status_message(f"Connecting to {server}:{str(port)}")
+                self.ui.add_status_message(
+                    f"Connecting to {server}:{str(port)}"
+                )
                 self.login(self.nick, self.user, self.name, self.host, server)
         else:
             self.ui.add_status_message("Already connected")
@@ -253,10 +257,10 @@ class SocketThread(threading.Thread):
         while not self.stop_thread_request.isSet():
             rx = rx + self.socket.recv(1024)
             if rx:
-                buffer = rx.decode(encoding='utf-8', errors='ignore')
-                decoded_bytes = len(bytes(buffer, 'utf-8'))
-                buffer = buffer.split('\n')
-                rx = bytes(buffer.pop(), 'utf-8') + rx[decoded_bytes:]
+                buffer = rx.decode(encoding="utf-8", errors="ignore")
+                decoded_bytes = len(bytes(buffer, "utf-8"))
+                buffer = buffer.split("\n")
+                rx = bytes(buffer.pop(), "utf-8") + rx[decoded_bytes:]
                 for line in buffer:
                     line = line.rstrip()
                     self.rx_queue.put(line)
@@ -422,9 +426,9 @@ class KeyboardHandler:
 
 
 def server_and_port(value):
-    splitted_connect_info = value.split(':')
+    splitted_connect_info = value.split(":")
     if len(splitted_connect_info) == 2 and splitted_connect_info[-1].isdigit:
-        server = ''.join(splitted_connect_info[:-1])
+        server = "".join(splitted_connect_info[:-1])
         port = int(splitted_connect_info[-1])
         return server, port
     else:
@@ -433,15 +437,12 @@ def server_and_port(value):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Curses IRC client')
+    parser = argparse.ArgumentParser(description="Curses IRC client")
     parser.set_defaults(nick=None)
     parser.add_argument(
-        '--connect', type=server_and_port, metavar='server:port')
-    parser.add_argument(
-        '--nick',
-        help='Specify nickname'
+        "--connect", type=server_and_port, metavar="server:port"
     )
+    parser.add_argument("--nick", help="Specify nickname")
     return parser.parse_args()
 
 

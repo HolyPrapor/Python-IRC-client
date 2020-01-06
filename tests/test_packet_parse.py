@@ -39,10 +39,15 @@ class ParsePacketTests(unittest.TestCase):
         self.event = None
 
     def test_socket_thread_work(self):
-        self.socket.recv(1024).decode = Mock()
-        self.socket.recv(1024).decode.side_effect = socket_iterator(
-            "weber.freenode.net NOTICE * :*** Looking up your hostname...\n",
-            "weber.freenode.net NOTICE * :*** Checking Ident\n",
+        self.socket.recv = Mock()
+        self.socket.recv.side_effect = socket_iterator(
+            bytes(
+                "weber.freenode.net NOTICE * :*** Looking up your hostname\n",
+                "utf-8",
+            ),
+            bytes(
+                "weber.freenode.net NOTICE * :*** Checking Ident\n", "utf-8"
+            ),
         )
 
         self.socket_thread.start()
@@ -52,7 +57,7 @@ class ParsePacketTests(unittest.TestCase):
 
         self.assertEqual(
             first_queued,
-            "weber.freenode.net NOTICE * :*** Looking up your hostname...",
+            "weber.freenode.net NOTICE * :*** Looking up your hostname",
         )
         self.assertEqual(
             second_queued, "weber.freenode.net NOTICE * :*** Checking Ident"
