@@ -6,6 +6,7 @@ from datetime import datetime
 import hashlib
 import socket
 import threading
+import argparse
 
 from curses_interface import CursesInterface
 
@@ -26,9 +27,13 @@ class IRC:
     stop_thread_request = threading.Event()
     rx_queue = Queue()
 
-    def __init__(self):
+    def __init__(self, nick="", connect_info=None):
+        if nick:
+            self.nick = nick
         self.ui = UserInterface(self)
         self.keyboard = KeyboardHandler(self)
+        if connect_info:
+            self.connect(*connect_info)
 
     def start_thread(self):
         self.socketThread = SocketThread(
@@ -45,11 +50,15 @@ class IRC:
             self.server = server
             self.port = port
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect((server, port))
-            self.start_thread()
-            self.ui.add_status_message(f"Connecting to {server}:{str(port)}")
-            self.connected = True
-            self.login(self.nick, self.user, self.name, self.host, server)
+            try:
+                self.sock.connect((server, port))
+                self.connected = True
+            except:
+                self.ui.add_status_message(f"Unable to connect to {server}:{str(port)}")
+            if self.connected:
+                self.start_thread()
+                self.ui.add_status_message(f"Connecting to {server}:{str(port)}")
+                self.login(self.nick, self.user, self.name, self.host, server)
         else:
             self.ui.add_status_message("Already connected")
 
@@ -250,10 +259,10 @@ class SocketThread(threading.Thread):
 class UserInterface:
     def __init__(self, irc):
         self.irc = irc
-        self.curses_ui = CursesInterface(irc)
+        self.curses_ui = CursesInterface(self.irc)
         self.draw_integral()
         self.add_status_message(
-            "Welcome to Zeliboba-IRC version " + irc.version
+            "Welcome to Zeliboba-IRC version " + self.irc.version
         )
         self.add_status_message("Type /help for a list of commands")
 
@@ -302,11 +311,26 @@ class UserInterface:
         self.curses_ui.toggle_debug()
 
     def draw_integral(self):
-        self.add_message("                /--  x", 2)
-        self.add_message("                I   e  ", 3)
-        self.add_message("                I ____ ", 3)
-        self.add_message("                ]  dx", 3)
-        self.add_message("              --/", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMMMMMMWWWMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMMMMMMKkd:,:xXMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMMK;  'c..oNMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMMMMMx. .dWKx0WMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMWd  .xMMMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMMMMWo  .kMMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMNc  .OMMMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMMMMN:  '0MMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMX;  ,KMMMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMMMMK,  ;XMMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMM0'  cNMMMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMMMMO.  lWMMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMk. .oWMMMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMWWMx...dWMMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMNx:dKl .;kMMMMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMWk'....o0NMMMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMWXkdkKWMMMMMMMMMMMMMMMMMMMM", 3)
+        self.add_message("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", 2)
+        self.add_message("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", 3)
 
     def get_time_stamp(self):
         return datetime.now().strftime("[%H:%M]")
@@ -388,5 +412,35 @@ class KeyboardHandler:
             self.irc.ui.add_status_message(msg)
 
 
+def server_and_port(value):
+    splitted_connect_info = value.split(':')
+    if len(splitted_connect_info) == 2 and splitted_connect_info[-1].isdigit:
+        server = ''.join(splitted_connect_info[:-1])
+        port = int(splitted_connect_info[-1])
+        return server, port
+    else:
+        print("Wrong arguments!")
+        raise argparse.ArgumentParser()
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Curses IRC client')
+    parser.set_defaults(nick=None)
+    parser.add_argument(
+        '--connect', type=server_and_port, metavar='server:port')
+    parser.add_argument(
+        '--nick',
+        help='Specify nickname'
+    )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    irc = IRC(nick=args.nick, connect_info=args.connect)
+    irc.run()
+
+
 if __name__ == "__main__":
-    IRC().run()
+    main()
